@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Students>
+@{
+    ViewBag.Title = "Student List page";}
+
+    <div class="card-deck">
+        @foreach (var student in Model)
+        {
+            <div class="card m-3">
+                <div class="card-header">
+                    <h3>@student.Name</h3>
+                </div>
+                <img class="car-img-top" src="~/images/header.jpg" />
+                <div class="card-footer text-center">
+                    <a asp-controller="home" asp-action="Details" asp-route-id="@student.Id" class="btn btn-primary">View</a>
+                    <a asp-controller="home" asp-action="Edit" asp-route-id="@student.Id" class="btn btn-primary">edit</a>
+                    <a href="#" class="btn btn-danger">delete</a>
+                </div>
+            </div>
+                
+        }
+    </div>

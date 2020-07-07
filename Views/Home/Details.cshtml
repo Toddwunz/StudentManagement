@@ -1,0 +1,32 @@
+﻿@model HomeDetailViewModels
+@{
+    ViewBag.Title = "Student detais page";
+    var photoPath = "~/images/" + (Model.Students.Photopath ?? "header.jpg");
+  }
+
+<div class="row justify-content-center m-3">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-header">
+                <h1>@Model.Students.Name</h1>
+            </div>
+
+            <div class="card-body text-center">
+                <img class="card-img-top" src=@photoPath />
+
+                <h4>Student ID : @Model.Students.Id</h4>
+                <h4>Email : @Model.Students.Email</h4>
+                <h4>Class : @Model.Students.ClassName</h4>
+            </div>
+            <div class="card-footer text-center">
+                <a asp-controller="home" asp-action="Index" class="btn btn-primary">return</a>
+                <a href="#" class="btn btn-primary">edit</a>
+                <a asp-controller="home" asp-action="Delete" class="btn btn-danger">delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/custom.js"></script>
+}
