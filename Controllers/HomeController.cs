@@ -36,39 +36,25 @@ namespace StudentManagement.Controllers
         }
 
 
-        public ViewResult Details(int? id)
+        public ViewResult Details(int id)
         {
-            //Students model = _studentRepository.GetStudents(2);
-
-            //ViewBag.PageTitle = "Student Details";
-            //ViewBag.student = model;
-            //ViewData["Student"] = model;
+            var Student = _studentRepository.GetStudents(id);
+            //create a viewmode instance and assign vaule to property
+            if (Student == null)
+            {
+                Response.StatusCode = 404;
+                return View("StudentNotFound",id);
+            }
 
             HomeDetailViewModels homeDetailViewModels = new HomeDetailViewModels()
-            //homeDetailViewModels.Students = _studentRepository.GetStudents(2);
-            //homeDetailViewModels.PageTitle = "Student Details";
             {
-                Students = _studentRepository.GetStudents(id ?? 1),
+                Students = Student,
                 PageTitle = "Student Details"
             };
 
             return View(homeDetailViewModels);
         }
 
-
-        public ViewResult Edit(int? id)
-        {
-
-            HomeDetailViewModels homeDetailViewModels = new HomeDetailViewModels()
-            //homeDetailViewModels.Students = _studentRepository.GetStudents(2);
-            //homeDetailViewModels.PageTitle = "Student Details";
-            {
-                Students = _studentRepository.GetStudents(id ?? 1),
-                PageTitle = "Student Details"
-            };
-
-            return View(homeDetailViewModels);
-        }
 
         [HttpGet]
         public ViewResult Create()
@@ -83,16 +69,7 @@ namespace StudentManagement.Controllers
             if (ModelState.IsValid)
             {
                 string uniqueFilename = null;
-                if (model.Photopath != null)
-                {
-                    string uploadFolder = Path.Combine(_hostingEnviroment.WebRootPath, "images");
-                    uniqueFilename = Guid.NewGuid().ToString() + "_" + model.Photopath.FileName;
-                    string filepath = Path.Combine(uploadFolder, uniqueFilename);
-                    model.Photopath.CopyTo(new FileStream(filepath, FileMode.Create));
-                }
-
-
-
+                uniqueFilename = ProcessUploadFile(model);
 
                 Students newstudent = new Students
                 {
@@ -108,6 +85,51 @@ namespace StudentManagement.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        public ViewResult Edit(int id)
+        {
+            var student = _studentRepository.GetStudents(id);
+            
+            StudentEditViewModel studentEditViewModel = new StudentEditViewModel
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Email = student.Email,
+                ClassName = student.ClassName,
+                ExistingPhotoPath = student.Photopath
+            };
+            return View(studentEditViewModel);
+
+        }
+
+        [HttpPost]
+        public IActionResult Edit(StudentEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var student = _studentRepository.GetStudents(model.Id);
+                student.Name = model.Name;
+                student.Email = model.Email;
+                student.ClassName = model.ClassName;
+                if (model.Photopath != null)
+                {
+                    if (model.ExistingPhotoPath != null)
+                    {
+                        string filePath= Path.Combine(_hostingEnviroment.WebRootPath, "images",model.ExistingPhotoPath);
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+
+                student.Photopath = ProcessUploadFile(model);
+
+                var updatestudent = _studentRepository.Update(student);
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
+        }
+
         public IActionResult Delete(int id)
         {
             if (_studentRepository.GetStudents(id) != null) {
@@ -116,5 +138,30 @@ namespace StudentManagement.Controllers
             var student = _studentRepository.GetAllStudents();
             return View(student);
         }
+        /// <summary>
+        /// upload chosed files
+        /// </summary>
+        /// <returns>new file path</returns>
+        public string ProcessUploadFile(StudentCreateViewModel model)
+        {
+            string uniqueFilename = null;
+            if (model.Photopath.Count > 0)
+            {
+                foreach (var photo in model.Photopath)
+                {
+                    string uploadFolder = Path.Combine(_hostingEnviroment.WebRootPath, "images");
+                    uniqueFilename = Guid.NewGuid().ToString() + "_" + photo.FileName;
+                    string filepath = Path.Combine(uploadFolder, uniqueFilename);
+                    using (var fileStream= new FileStream(filepath, FileMode.Create))
+                    {
+                        photo.CopyTo(fileStream);
+                    }
+                        
+                }
+            }
+
+            return uniqueFilename;
+        }
+   
     }
 }

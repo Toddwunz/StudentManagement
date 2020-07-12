@@ -1,10 +1,10 @@
 ﻿using System;
 namespace StudentManagement.ViewModels
 {
-    public class StudentEditViewModel
+    public class StudentEditViewModel:StudentCreateViewModel
     {
-        public StudentEditViewModel()
-        {
-        }
+        public int Id {  get; set; }
+
+        public string ExistingPhotoPath { get; set; }
     }
 }

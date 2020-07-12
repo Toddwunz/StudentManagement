@@ -1,21 +1,25 @@
 ﻿@model IEnumerable<Students>
 @{
-    ViewBag.Title = "Student List page";}
+    ViewBag.Title = "Student List page";
+    
+ }
 
-    <div class="card-deck">
+    <div class="row">
         @foreach (var student in Model)
         {
-            <div class="card m-3">
+            var photoPath = "~/images/" + (student.Photopath?? "header.jpg");
+         <div class="col-md-4">
+            <div class="card m-4">
                 <div class="card-header">
                     <h3>@student.Name</h3>
                 </div>
-                <img class="car-img-top" src="~/images/header.jpg" />
+                <img class="card-img-top imagesThumbnail" src="@photoPath" asp-append-version="true"/>
                 <div class="card-footer text-center">
                     <a asp-controller="home" asp-action="Details" asp-route-id="@student.Id" class="btn btn-primary">View</a>
                     <a asp-controller="home" asp-action="Edit" asp-route-id="@student.Id" class="btn btn-primary">edit</a>
                     <a href="#" class="btn btn-danger">delete</a>
                 </div>
             </div>
-                
+          </div>     
         }
     </div>

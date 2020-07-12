@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -8,8 +9,6 @@ namespace StudentManagement.ViewModels
 {
     public class StudentCreateViewModel
     {
-        public int Id { get; set; }
-
         [Display(Name = "Student Name")]
         [Required(ErrorMessage = "Please input name")]
         public string Name { get; set; }
@@ -22,6 +21,6 @@ namespace StudentManagement.ViewModels
         public string Email { get; set; }
 
         [Display(Name = "Profile photo")]
-        public IFormFile Photopath { get; set; }
+        public List<IFormFile> Photopath { get; set; }
     }
 }

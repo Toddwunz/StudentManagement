@@ -36,8 +36,9 @@ namespace StudentManagement
             //services.AddSingleton<IStudentRepository,MockStudentsRepository>();
             //services.AddScoped<IStudentRepository, MockStudentsRepository>();
             services.AddScoped<IStudentRepository, studentRepository>();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
 
-           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +47,11 @@ namespace StudentManagement
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseStatusCodePagesWithRedirects("/Error/{0}");
             }
 
             app.UseStaticFiles();
