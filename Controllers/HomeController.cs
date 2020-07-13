@@ -38,6 +38,7 @@ namespace StudentManagement.Controllers
 
         public ViewResult Details(int id)
         {
+            
             var Student = _studentRepository.GetStudents(id);
             //create a viewmode instance and assign vaule to property
             if (Student == null)
